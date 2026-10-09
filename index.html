@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#08090b">
+  <title>Desafío Simracing CKC · Ranking en vivo</title>
+  <script>
+    // Aplica el modo pantalla antes de pintar para evitar parpadeos.
+    if (/[?&]tv=1(&|$)/.test(location.search)) document.documentElement.classList.add('tv');
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Saira+Condensed:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/public.css">
+  <link rel="icon" href="assets/logo-club.svg">
+</head>
+<body class="textura">
+  <header class="top" id="top">
+    <img class="logo-club" src="assets/logo-club.svg" alt="Club de Karting Concepción">
+    <div class="titulo">
+      <h1 id="ev-titulo">Desafío Simracing CKC</h1>
+      <p class="sub"><span id="ev-pista">Pista por definir</span><span class="sep">//</span><span id="ev-auto">Auto por definir</span></p>
+    </div>
+    <div class="rental">
+      <span>Simulador gentileza de</span>
+      <img src="assets/logo-rental.svg" alt="">
+      <b id="ev-rental">[Empresa Rental]</b>
+    </div>
+    <div class="qr" id="qr">
+      <div class="qr-img" id="qr-img"></div>
+      <div class="qr-txt">Ranking en tu teléfono<small id="qr-url"></small></div>
+    </div>
+    <div class="conn" id="conn" data-estado="polling" role="status"><i></i><span>Conectando…</span></div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Rankings"></nav>
+
+  <main id="boards" aria-live="polite"></main>
+
+  <footer class="ultimo" id="ultimo" hidden>
+    <span class="sesgo etq"><span>Último tiempo</span></span>
+    <span class="u-num tnum" id="u-num"></span>
+    <span class="u-nom" id="u-nom"></span>
+    <span class="u-t" id="u-t"></span>
+    <span class="u-res" id="u-res"></span>
+  </footer>
+
+  <p class="pie-movil">Se actualiza solo · no necesitas recargar</p>
+
+  <script type="module" src="js/public.js"></script>
+</body>
+</html>

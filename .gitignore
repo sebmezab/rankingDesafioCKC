@@ -1,0 +1,9 @@
+*.xlsx
+*.csv
+secrets*.txt
+*.env
+.env*
+.mcp.json
+.claude/
+.DS_Store
+Thumbs.db

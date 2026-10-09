@@ -1,0 +1,94 @@
+/* =====================================================================
+   VARIABLES — cambia aquí colores y tipografías del club
+   ===================================================================== */
+:root {
+  /* Colores */
+  --bg:          #08090b;   /* fondo general */
+  --bg-2:        #101217;   /* paneles */
+  --bg-3:        #171a21;   /* filas */
+  --bg-4:        #20242d;   /* filas hover / alternas */
+  --line:        #2a2f3a;
+  --text:        #f4f5f7;
+  --muted:       #8d94a1;
+  --accent:      #e10600;   /* rojo racing (color principal) */
+  --accent-ink:  #ffffff;   /* texto sobre --accent */
+  --flag:        #ffd400;   /* amarillo bandera: destacados */
+  --gold:        #ffc83d;
+  --silver:      #d3d9e2;
+  --bronze:      #d98b4a;
+  --ok:          #1fe08a;
+  --warn:        #ffb020;
+  --danger:      #ff3b3b;
+
+  /* Tipografías */
+  --font-display: 'Saira Condensed', 'Arial Narrow', 'Roboto Condensed', system-ui, sans-serif;
+  --font-body:    'Barlow Semi Condensed', 'Arial Narrow', 'Roboto Condensed', system-ui, sans-serif;
+  --font-time:    'Barlow Semi Condensed', 'Arial Narrow', system-ui, sans-serif;
+
+  /* Forma */
+  --skew: -12deg;
+  --radius: 4px;
+
+  color-scheme: dark;
+}
+
+/* ===================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+
+.tnum, .t, .gap, .num, .pos {
+  font-family: var(--font-time);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Textura de fondo: líneas diagonales muy sutiles */
+.textura {
+  background-image:
+    repeating-linear-gradient(115deg, rgba(255,255,255,.018) 0 2px, transparent 2px 9px),
+    radial-gradient(120% 80% at 0% 0%, rgba(225,6,0,.10), transparent 60%),
+    linear-gradient(var(--bg), var(--bg));
+}
+
+/* Franja a cuadros (bandera) */
+.cuadros {
+  --c: .5rem;
+  background:
+    repeating-conic-gradient(var(--text) 0 25%, var(--bg) 0 50%) 0 0 / calc(var(--c) * 2) calc(var(--c) * 2);
+}
+
+/* Indicador de conexión */
+.conn { display: inline-flex; align-items: center; gap: .45em; font-size: .8rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .08em; font-weight: 600; white-space: nowrap; }
+.conn i { width: .7em; height: .7em; border-radius: 50%; background: var(--muted); flex: none; }
+.conn[data-estado="live"] i    { background: var(--ok); box-shadow: 0 0 0 0 var(--ok); animation: latido 2s infinite; }
+.conn[data-estado="polling"] i { background: var(--warn); }
+.conn[data-estado="offline"]   { color: var(--danger); }
+.conn[data-estado="offline"] i { background: var(--danger); }
+.conn[data-estado="demo"] i    { background: var(--flag); }
+@keyframes latido {
+  0%   { box-shadow: 0 0 0 0 rgba(31,224,138,.55); }
+  70%  { box-shadow: 0 0 0 .55em rgba(31,224,138,0); }
+  100% { box-shadow: 0 0 0 0 rgba(31,224,138,0); }
+}
+
+/* Encabezado inclinado estilo carrera */
+.sesgo {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--accent-ink);
+  transform: skewX(var(--skew));
+  padding: .1em .6em;
+}
+.sesgo > * { display: inline-block; transform: skewX(calc(var(--skew) * -1)); }

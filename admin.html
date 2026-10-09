@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#08090b">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Staff · Desafío Simracing CKC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Saira+Condensed:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="icon" href="assets/logo-club.svg">
+</head>
+<body>
+  <!-- Arranque -->
+  <div id="arranque" class="arranque">
+    <p id="arranque-txt">Cargando…</p>
+    <button id="arranque-reintentar" class="btn-pri" type="button" hidden>Reintentar</button>
+  </div>
+
+  <!-- Login -->
+  <section id="login" class="login textura" hidden>
+    <form id="f-login" class="login-card" autocomplete="on">
+      <img src="assets/logo-club.svg" alt="" class="login-logo">
+      <h1><span class="sesgo"><span>Staff</span></span></h1>
+      <p class="muted">Desafío Simracing · ingreso de tiempos</p>
+      <input type="email" name="username" autocomplete="username" hidden>
+      <label class="campo">
+        <span>Contraseña</span>
+        <input id="pw" type="password" autocomplete="current-password" required>
+      </label>
+      <p id="login-err" class="err" role="alert"></p>
+      <button class="btn-pri grande" type="submit" id="btn-login">Entrar</button>
+    </form>
+  </section>
+
+  <!-- App -->
+  <div id="app" hidden>
+    <header class="abar">
+      <img src="assets/logo-club.svg" alt="" class="abar-logo">
+      <div class="abar-tit">
+        <b>Staff</b>
+        <span id="a-ev" class="muted"></span>
+      </div>
+      <div class="conn" id="conn" data-estado="polling"><i></i><span>Conectando…</span></div>
+      <button id="btn-salir" class="btn-link" type="button">Salir</button>
+    </header>
+
+    <main class="vistas">
+      <!-- ============ INGRESAR ============ -->
+      <section id="v-ingresar" class="vista">
+        <div id="form-ingreso">
+          <div class="paso">
+            <div class="paso-h"><span class="n">1</span>Ranking</div>
+            <div class="seg" id="seg-ranking" role="radiogroup"></div>
+          </div>
+
+          <div class="paso">
+            <div class="paso-h"><span class="n">2</span><span id="persona-tit">Piloto</span></div>
+            <div id="elegida" class="elegida" hidden>
+              <div class="e-txt"><b id="e-nom"></b><span id="e-info" class="muted"></span></div>
+              <button id="e-cambiar" class="btn-sec" type="button">Cambiar</button>
+            </div>
+            <div id="buscador">
+              <input id="q" class="input grande" type="search" autocomplete="off" autocapitalize="words" spellcheck="false">
+              <p id="q-ayuda" class="ayuda"></p>
+              <ul id="resultados" class="lista resultados"></ul>
+            </div>
+          </div>
+
+          <div class="paso">
+            <div class="paso-h"><span class="n">3</span>Tiempo</div>
+            <input id="tiempo" class="input grande tnum" inputmode="decimal" autocomplete="off" enterkeyhint="done"
+                   placeholder="1:23.456 · 83.456 · 123456">
+            <p id="tiempo-prev" class="prev"></p>
+            <button id="btn-revisar" class="btn-pri grande" type="button">Revisar</button>
+          </div>
+        </div>
+
+        <div id="confirmar" class="panel-conf" hidden>
+          <p class="etq">Confirma antes de guardar</p>
+          <p class="c-linea tnum" id="c-linea"></p>
+          <p class="c-ctx" id="c-ctx"></p>
+          <label class="c-alerta" id="c-alerta" hidden>
+            <input type="checkbox" id="c-alerta-ok">
+            <span id="c-alerta-txt"></span>
+          </label>
+          <p class="err" id="c-err" role="alert"></p>
+          <div class="botones">
+            <button id="c-volver" class="btn-sec grande" type="button">Corregir</button>
+            <button id="c-guardar" class="btn-pri grande" type="button">Guardar</button>
+          </div>
+        </div>
+
+        <div id="resultado" class="panel-res" hidden>
+          <p class="etq">Guardado</p>
+          <p class="r-quien tnum" id="r-quien"></p>
+          <p class="r-msg" id="r-msg"></p>
+          <p class="err" id="r-err" role="alert"></p>
+          <div class="botones">
+            <button id="r-deshacer" class="btn-sec grande" type="button">Deshacer</button>
+            <button id="r-siguiente" class="btn-pri grande" type="button">Siguiente tiempo</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CORREGIR ============ -->
+      <section id="v-corregir" class="vista" hidden>
+        <div class="seg sub" id="sub-tabs">
+          <button type="button" data-sub="intentos" aria-pressed="true">Intentos recientes</button>
+          <button type="button" data-sub="participantes" aria-pressed="false">Participantes</button>
+        </div>
+        <div id="sub-intentos">
+          <ul id="l-intentos" class="lista"></ul>
+        </div>
+        <div id="sub-participantes" hidden>
+          <div class="seg" id="seg-part"></div>
+          <div class="fila-busq">
+            <input id="q-part" class="input" type="search" placeholder="Buscar por nombre o número" autocomplete="off">
+            <button id="btn-add-piloto" class="btn-sec" type="button">+ Piloto</button>
+          </div>
+          <ul id="l-part" class="lista"></ul>
+        </div>
+      </section>
+
+      <!-- ============ CONFIGURACIÓN ============ -->
+      <section id="v-config" class="vista" hidden>
+        <form id="f-evento" class="tarjeta">
+          <h2>Evento</h2>
+          <label class="campo"><span>Título</span><input id="ev-titulo" class="input" maxlength="80" required></label>
+          <label class="campo"><span>Pista</span><input id="ev-pista" class="input" maxlength="80"></label>
+          <label class="campo"><span>Auto</span><input id="ev-auto" class="input" maxlength="80"></label>
+          <label class="campo"><span>Empresa de rental</span><input id="ev-rental" class="input" maxlength="80"></label>
+          <p class="err" id="ev-err"></p>
+          <button class="btn-pri" type="submit" id="btn-ev">Guardar cambios</button>
+        </form>
+
+        <div class="tarjeta">
+          <h2>Rankings</h2>
+          <label class="switch">
+            <input type="checkbox" id="sw-prep">
+            <span class="sw"></span>
+            <span>Activar Preparadores</span>
+          </label>
+          <p class="ayuda">Apagado, el ranking Preparadores no aparece en ninguna parte del sitio.</p>
+        </div>
+
+        <div class="tarjeta">
+          <h2>Exportar</h2>
+          <div class="botones-col" id="export"></div>
+        </div>
+
+        <div class="tarjeta">
+          <h2>Pantallas</h2>
+          <div class="botones-col">
+            <a class="btn-sec" id="lnk-publico" href="index.html" target="_blank" rel="noopener">Abrir ranking público</a>
+            <a class="btn-sec" id="lnk-tv" href="index.html?tv=1" target="_blank" rel="noopener">Abrir modo pantalla (TV)</a>
+          </div>
+        </div>
+
+        <div class="tarjeta peligro">
+          <h2>Zona de reinicio</h2>
+          <p class="ayuda">Estas acciones no se pueden deshacer.</p>
+          <div class="botones-col">
+            <button id="btn-reset-tiempos" class="btn-peligro" type="button">Borrar todos los tiempos</button>
+            <button id="btn-reset-open" class="btn-peligro" type="button">Borrar tiempos y participantes de Open/Preparadores</button>
+          </div>
+        </div>
+        <p class="ayuda centro" id="modo-txt"></p>
+      </section>
+    </main>
+
+    <nav class="bnav" id="bnav">
+      <button type="button" data-vista="ingresar" aria-current="page">⏱<span>Ingresar</span></button>
+      <button type="button" data-vista="corregir">✎<span>Corregir</span></button>
+      <button type="button" data-vista="config">⚙<span>Configuración</span></button>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
