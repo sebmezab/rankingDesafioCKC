@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Saira+Condensed:wght@600;700;800&display=swap">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/admin.css">
-  <link rel="icon" href="assets/logo-club.svg">
+  <link rel="icon" type="image/png" href="assets/logo-club.png">
 </head>
 <body>
   <!-- Arranque -->
@@ -23,7 +23,7 @@
   <!-- Login -->
   <section id="login" class="login textura" hidden>
     <form id="f-login" class="login-card" autocomplete="on">
-      <img src="assets/logo-club.svg" alt="" class="login-logo">
+      <img src="assets/logo-club.png" alt="" class="login-logo">
       <h1><span class="sesgo"><span>Staff</span></span></h1>
       <p class="muted">Desafío Simracing · ingreso de tiempos</p>
       <input type="email" name="username" autocomplete="username" hidden>
@@ -39,7 +39,7 @@
   <!-- App -->
   <div id="app" hidden>
     <header class="abar">
-      <img src="assets/logo-club.svg" alt="" class="abar-logo">
+      <img src="assets/logo-club.png" alt="" class="abar-logo">
       <div class="abar-tit">
         <b>Staff</b>
         <span id="a-ev" class="muted"></span>
@@ -73,7 +73,8 @@
           <div class="paso">
             <div class="paso-h"><span class="n">3</span>Tiempo</div>
             <input id="tiempo" class="input grande tnum" inputmode="decimal" autocomplete="off" enterkeyhint="done"
-                   placeholder="1:23.456 · 83.456 · 123456">
+                   placeholder="1:23.456">
+            <p class="ayuda">Escribe solo los números, los separadores se ponen solos. Bajo el minuto empieza con 0 (0:58.123).</p>
             <p id="tiempo-prev" class="prev"></p>
             <button id="btn-revisar" class="btn-pri grande" type="button">Revisar</button>
           </div>

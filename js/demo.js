@@ -62,7 +62,7 @@ export function crearDbDemo() {
   const db = {
     evento: {
       id: 1, titulo: 'Desafío Simracing CKC', pista: 'Autódromo de demostración',
-      auto: 'Fórmula demo', rental_nombre: '[Empresa Rental]', preparadores_activo: false,
+      auto: 'Fórmula demo', rental_nombre: '', preparadores_activo: false,
     },
     participantes: [],
     intentos: [],

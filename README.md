@@ -82,12 +82,8 @@ Todas las rutas del sitio son relativas, así que funciona bajo `/nombre-repo/`.
 
 ### 6. Reemplazar logos y colores
 
-- **Logos**: reemplaza `assets/logo-club.svg` y `assets/logo-rental.svg` por los reales con el mismo nombre.
-  Para usar **PNG**: copia `assets/logo-club.png` / `assets/logo-rental.png` y cambia la extensión en estas líneas:
-  - `index.html`: `<img class="logo-club" src="assets/logo-club.svg"…>`, `<img src="assets/logo-rental.svg"…>` y el `<link rel="icon"…>`.
-  - `admin.html`: las dos `<img src="assets/logo-club.svg"…>` y el `<link rel="icon"…>`.
-  Ideal: fondo transparente, horizontal, al menos 400 px de ancho.
-- **Nombre de la rental**: desde `admin.html → Configuración → Empresa de rental` (valor inicial `[Empresa Rental]`).
+- **Logos**: `assets/logo-club.png` (Club de Karting Concepción) y `assets/logo-rental.png` (Formula Kart), copiados al repositorio para no depender de enlaces externos. Para cambiarlos, reemplaza esos archivos manteniendo el nombre (ideal: PNG con fondo transparente, pensado para fondo oscuro, al menos 400 px de ancho).
+- **Nombre de la rental**: desde `admin.html → Configuración → Empresa de rental` (opcional: el logo ya dice Formula Kart; si se escribe algo, aparece junto al logo).
 - **Colores y tipografías**: variables al inicio de [`css/base.css`](css/base.css) (`--accent` rojo principal, `--flag` amarillo de destacados, `--bg`…). Las fuentes vienen de Google Fonts (`Saira Condensed` y `Barlow Semi Condensed`), cargadas en el `<head>` de cada HTML.
 
 ### 7. Checklist de prueba previo al evento

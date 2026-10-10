@@ -21,6 +21,20 @@ export function formatGap(ms) {
 }
 
 /**
+ * Máscara de ingreso: pone ":" y "." a medida que se escriben dígitos.
+ * "1" -> "1:", "123" -> "1:23.", "123456" -> "1:23.456" (minutos de 1 dígito;
+ * bajo el minuto se empieza con 0). Con `cerrar` falso no deja un separador
+ * al final, para que borrar con retroceso no quede trabado.
+ */
+export function enmascararTiempo(texto, cerrar = true) {
+  const d = String(texto ?? '').replace(/\D/g, '').slice(0, 6);
+  if (!d) return '';
+  if (d.length === 1) return d + (cerrar ? ':' : '');
+  if (d.length <= 3) return `${d[0]}:${d.slice(1)}` + (d.length === 3 && cerrar ? '.' : '');
+  return `${d[0]}:${d.slice(1, 3)}.${d.slice(3)}`;
+}
+
+/**
  * Interpreta lo que escribe el staff. Acepta:
  *   "1:23.456"  -> 1 min 23.456 s
  *   "83.456"    -> 83.456 s

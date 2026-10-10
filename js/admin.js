@@ -2,8 +2,8 @@ import { CONFIG } from './config.js';
 import {
   crearStore, iniciarEnVivo, rankingsActivos, NOMBRE_RANKING, esDemo, traducirError, ordenar,
 } from './store.js';
-import { formatTiempo, parseTiempo } from './format.js';
-import { buscarParecidos, coincideNombre, coincideNumero } from './fuzzy.js';
+import { formatTiempo, parseTiempo, enmascararTiempo } from './format.js';
+import { buscarParecidos, coincideNombre, coincideNumero, normalizar } from './fuzzy.js';
 
 const $ = (s) => document.querySelector(s);
 const el = (tag, cls, texto) => {
@@ -119,6 +119,35 @@ function dialogo({ titulo, texto, contenido, botones = [] }) {
     refrescar();
     d.showModal();
     d.querySelector('input:not([type=checkbox])')?.focus();
+  });
+}
+
+/**
+ * Autocompleta ":" y "." mientras se escribe un tiempo. Registrar antes que
+ * los demás listeners de input para que ellos lean el valor ya formateado.
+ */
+function mascaraTiempo(input) {
+  input.addEventListener('input', (e) => {
+    const v = input.value;
+    const tipo = e.inputType || '';
+    if (tipo === 'insertFromPaste' || tipo === 'insertFromDrop' || (e.data && e.data.length > 1)) {
+      // Lo pegado o dictado con separadores ("83.456", "1:23.456") se interpreta tal cual.
+      const r = parseTiempo(v);
+      if (r.ok && /[:.,]/.test(v)) { input.value = formatTiempo(r.ms); return; }
+    }
+    const caret = input.selectionStart ?? v.length;
+    const alFinal = caret === v.length;
+    const nuevo = enmascararTiempo(v, tipo.startsWith('insert') && alFinal);
+    if (nuevo === v) return;
+    input.value = nuevo;
+    let pos = nuevo.length;
+    if (!alFinal) {
+      // Mantiene el cursor detrás del mismo dígito al editar en medio.
+      const digitos = v.slice(0, caret).replace(/\D/g, '').length;
+      pos = 0;
+      for (let n = 0; pos < nuevo.length && n < digitos; pos++) if (/\d/.test(nuevo[pos])) n++;
+    }
+    input.setSelectionRange(pos, pos);
   });
 }
 
@@ -262,7 +291,7 @@ function renderIngreso(desdeDatos = false) {
   $('#q').inputMode = 'text';
   $('#q-ayuda').textContent = esPil
     ? 'Busca en la lista de pilotos inscritos.'
-    : 'Elige a alguien ya registrado o crea uno nuevo (nombre y apellido).';
+    : 'Escribe nombre y apellido: si ya corrió, elígelo de la lista; si no, se crea al guardar.';
 
   const p = ing.persona;
   $('#elegida').hidden = !p;
@@ -285,8 +314,12 @@ function renderResultados() {
     if (q) lista = lista.filter(p => soloNum ? coincideNumero(p.numero, q) : (coincideNombre(p.nombre, q) || coincideNumero(p.numero, q)));
     lista.sort((a, b) => primerNumero(a.numero) - primerNumero(b.numero));
   } else {
-    if (q) lista = lista.filter(p => coincideNombre(p.nombre, q));
-    lista.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+    // Autocompletar: solo sugiere mientras se escribe, primero los que empiezan igual.
+    const nq = normalizar(q);
+    lista = q ? lista.filter(p => coincideNombre(p.nombre, q)) : [];
+    const empieza = (p) => (normalizar(p.nombre).startsWith(nq) ? 0 : 1);
+    lista.sort((a, b) => empieza(a) - empieza(b) || a.nombre.localeCompare(b.nombre, 'es'));
+    lista = lista.slice(0, 8);
   }
 
   const ul = $('#resultados');
@@ -300,28 +333,48 @@ function renderResultados() {
     li.append(b);
     return li;
   });
-  if (r !== 'pilotos' && q) {
+  if (r !== 'pilotos' && q && !exactoDe(q)) {
     const li = el('li');
     const b = boton(null, 'item crear', () => crearNuevo(q));
-    b.append(el('span', 'i-nom', `Crear «${limpiarNombre(q)}»`));
+    b.append(el('span', 'i-nom', `Nuevo: «${limpiarNombre(q)}»`), el('span', 'i-t', 'se crea al guardar'));
     li.append(b);
     items.push(li);
   }
-  if (!items.length) {
-    items.push(el('li', 'lista-vacia', r === 'pilotos'
-      ? 'Ningún piloto coincide. Los pilotos se agregan desde Corregir > Participantes.'
-      : (snap ? 'Aún no hay nadie registrado. Escribe nombre y apellido.' : 'Cargando…')));
+  if (!items.length && r === 'pilotos') {
+    items.push(el('li', 'lista-vacia', 'Ningún piloto coincide. Los pilotos se agregan desde Corregir > Participantes.'));
   }
   ul.replaceChildren(...items);
 }
 
 $('#q').addEventListener('input', renderResultados);
-$('#q').addEventListener('keydown', (e) => {
+$('#q').addEventListener('keydown', async (e) => {
   if (e.key !== 'Enter') return;
   e.preventDefault();
+  if (ing.ranking !== 'pilotos') {
+    if ($('#q').value.trim() && await resolverTexto()) $('#tiempo').focus();
+    return;
+  }
   const primero = $('#resultados .item');
   if (primero) primero.click();
 });
+
+/** Participante del ranking actual con exactamente ese nombre (sin tildes/mayúsculas). */
+function exactoDe(texto) {
+  const n = normalizar(texto);
+  return (snap?.participantes || []).find(p => p.ranking === ing.ranking && normalizar(p.nombre) === n) || null;
+}
+
+/**
+ * Open/Preparadores: convierte lo escrito en el buscador en la persona del
+ * ingreso. Usa al existente si el nombre coincide; si no, la deja como nueva
+ * (se crea al guardar), preguntando antes si se parece a alguien.
+ */
+async function resolverTexto() {
+  const q = $('#q').value;
+  const exacto = exactoDe(q);
+  if (exacto) { elegirPersona(exacto); return true; }
+  return crearNuevo(q);
+}
 $('#e-cambiar').addEventListener('click', () => {
   ing.persona = null;
   renderIngreso();
@@ -340,7 +393,7 @@ async function crearNuevo(texto) {
   if (nombre.split(' ').filter(w => w.length >= 2).length < 2) {
     aviso('Escribe nombre y apellido.', true);
     $('#q').focus();
-    return;
+    return false;
   }
   const existentes = snap.participantes.filter(p => p.ranking === ing.ranking);
   const parecidos = buscarParecidos(nombre, existentes);
@@ -365,12 +418,13 @@ async function crearNuevo(texto) {
       },
       botones: [{ texto: 'Volver' }],
     });
-    if (!elegido) return;
-    if (elegido.existente) return elegirPersona(elegido.existente);
+    if (!elegido) return false;
+    if (elegido.existente) { elegirPersona(elegido.existente); return true; }
   }
   ing.persona = { id: null, ranking: ing.ranking, nombre, numero: null };
   renderIngreso();
   $('#tiempo').focus();
+  return true;
 }
 
 function actualizarPrevTiempo() {
@@ -390,11 +444,16 @@ function actualizarPrevTiempo() {
     prev.textContent = r.error;
   }
 }
+mascaraTiempo($('#tiempo'));
 $('#tiempo').addEventListener('input', actualizarPrevTiempo);
 $('#tiempo').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); revisar(); } });
 $('#btn-revisar').addEventListener('click', revisar);
 
-function revisar() {
+async function revisar() {
+  // En Open/Preparadores basta con escribir el nombre: se resuelve aquí.
+  if (!ing.persona && ing.ranking !== 'pilotos' && $('#q').value.trim()) {
+    if (!await resolverTexto()) return;
+  }
   if (!ing.persona) {
     aviso(ing.ranking === 'pilotos' ? 'Elige un piloto.' : 'Elige o crea un participante.', true);
     $('#q').focus();
@@ -606,6 +665,7 @@ async function editarIntento(i, p) {
     prev.className = 'prev ' + (r.ok ? 'ok' : 'mal');
     prev.textContent = r.ok ? '= ' + formatTiempo(r.ms) : r.error;
   };
+  mascaraTiempo(input);
   input.addEventListener('input', actualizar);
   actualizar();
   const cont = el('div');

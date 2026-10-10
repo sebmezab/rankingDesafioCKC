@@ -12,7 +12,7 @@ create table if not exists public.evento (
   titulo              text not null default 'Desafío Simracing CKC',
   pista               text not null default 'Pista por definir',
   auto                text not null default 'Auto por definir',
-  rental_nombre       text not null default '[Empresa Rental]',
+  rental_nombre       text not null default '',
   preparadores_activo boolean not null default false
 );
 insert into public.evento (id) values (1) on conflict (id) do nothing;

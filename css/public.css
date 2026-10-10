@@ -37,7 +37,8 @@
 .titulo .sub .sep { color: var(--accent); margin: 0 .45em; font-weight: 700; }
 .rental { grid-area: rental; display: flex; align-items: center; gap: .5rem; color: var(--muted); font-size: .75rem;
   text-transform: uppercase; letter-spacing: .06em; min-width: 0; }
-.rental img { height: 1.4rem; width: auto; }
+.rental img { height: 1.9rem; width: auto; }
+.rental b:empty { display: none; }
 .rental b { color: var(--text); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .conn { grid-area: conn; font-size: .68rem; }
 .conn span { max-width: 9.5rem; overflow: hidden; text-overflow: ellipsis; }
@@ -165,7 +166,7 @@ html:not(.tv) .row.flash::after { top: 0; transform: translateY(-45%) skewX(var(
   .top { grid-template-columns: auto 1fr auto auto; grid-template-areas: "logo titulo rental conn"; padding-inline: 1.5rem; }
   .logo-club { height: 3.2rem; }
   .titulo h1 { font-size: 1.7rem; }
-  .rental img { height: 2rem; }
+  .rental img { height: 2.6rem; }
   #boards { padding-inline: 1.5rem; max-width: 980px; margin: 0 auto; }
   .tabs { max-width: 980px; margin: 0 auto; padding-inline: 1.5rem; }
   .row { font-size: 1.12rem; }
@@ -197,7 +198,7 @@ html.tv .logo-club { height: 4.6rem; }
 html.tv .titulo h1 { font-size: 3.1rem; letter-spacing: .005em; }
 html.tv .titulo .sub { font-size: 1.3rem; margin-top: .4rem; }
 html.tv .rental { flex-direction: column; align-items: flex-end; gap: .25rem; font-size: .95rem; text-align: right; }
-html.tv .rental img { height: 3.2rem; }
+html.tv .rental img { height: 4.2rem; }
 html.tv .rental b { font-size: 1.25rem; }
 html.tv .qr {
   grid-area: qr; display: flex; align-items: center; gap: .7rem;
